@@ -1,0 +1,13 @@
+{
+  "@@locale": "hi",
+  "signUp": "साइन अप करें",
+  "createAccount": "खाता बनाएं",
+  "email": "ईमेल",
+  "password": "पासवर्ड",
+  "register": "रजिस्टर करें",
+  "username": "उपयोगकर्ता नाम",
+  "usernameRequired": "उपयोगकर्ता नाम आवश्यक है",
+  "emailRequired": "ईमेल आवश्यक है",
+  "passwordRequired": "पासवर्ड 6+ अक्षर का होना चाहिए",
+  "registerFailed": "रजिस्ट्रेशन विफल"
+}

@@ -1,0 +1,13 @@
+{
+  "@@locale": "mr",
+  "signUp": "साइन अप करा",
+  "createAccount": "खाते तयार करा",
+  "email": "ईमेल",
+  "password": "पासवर्ड",
+  "register": "नोंदणी करा",
+  "username": "वापरकर्तानाव",
+  "usernameRequired": "वापरकर्तानाव आवश्यक आहे",
+  "emailRequired": "ईमेल आवश्यक आहे",
+  "passwordRequired": "पासवर्ड 6+ अक्षरांचा असावा",
+  "registerFailed": "नोंदणी अयशस्वी"
+}

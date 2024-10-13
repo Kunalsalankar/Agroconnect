@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "544534557483",
+    "project_id": "timepass-dad79",
+    "storage_bucket": "timepass-dad79.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544534557483:android:d3853297eefad66e850b6e",
+        "android_client_info": {
+          "package_name": "com.example.googlemerr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBx5F_u3xReuvU56_IxQabJg9vizCiztTw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

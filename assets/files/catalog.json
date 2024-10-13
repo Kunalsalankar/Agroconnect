@@ -1,0 +1,76 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Mobile Phone",
+      "desc": "A smartphone with all the latest features.",
+      "price": 699.99,
+      "colour": "Black",
+      "image": "assets/images/mobile.png"
+    },
+    {
+      "id": 2,
+      "name": "Television",
+      "desc": "A 55-inch 4K Ultra HD TV.",
+      "price": 899.99,
+      "colour": "Silver",
+      "image": "assets/images/tv.png"
+    },
+    {
+      "id": 3,
+      "name": "Laptop",
+      "desc": "A high-performance laptop for all your computing needs.",
+      "price": 1299.99,
+      "colour": "Gray",
+      "image": "assets/images/laptop.png"
+    },
+    {
+      "id": 4,
+      "name": "Headphones",
+      "desc": "Noise-cancelling over-ear headphones.",
+      "price": 199.99,
+      "colour": "Blue",
+      "image": "assets/images/headphones.png"
+    },
+    {
+      "id": 5,
+      "name": "Smart Watch",
+      "desc": "A smartwatch with fitness tracking and notifications.",
+      "price": 249.99,
+      "colour": "Black",
+      "image": "assets/images/smartwatch.png"
+    },
+    {
+      "id": 6,
+      "name": "Tablet",
+      "desc": "A lightweight tablet with a high-resolution display.",
+      "price": 499.99,
+      "colour": "White",
+      "image": "assets/images/tablet.png"
+    },
+    {
+      "id": 7,
+      "name": "Camera",
+      "desc": "A digital camera with high-resolution image capture.",
+      "price": 599.99,
+      "colour": "Black",
+      "image": "assets/images/camera.png"
+    },
+    {
+      "id": 8,
+      "name": "Bluetooth Speaker",
+      "desc": "A portable Bluetooth speaker with excellent sound quality.",
+      "price": 149.99,
+      "colour": "Red",
+      "image": "assets/images/speaker.png"
+    },
+    {
+      "id": 9,
+      "name": "Gaming Console",
+      "desc": "A next-gen gaming console with powerful graphics.",
+      "price": 399.99,
+      "colour": "White",
+      "image": "assets/images/console.png"
+    }
+  ]
+}

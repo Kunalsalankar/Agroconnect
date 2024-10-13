@@ -1,0 +1,29 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "timepass-dad79",
+          "appId": "1:544534557483:android:d3853297eefad66e850b6e",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "timepass-dad79",
+          "configurations": {
+            "android": "1:544534557483:android:d3853297eefad66e850b6e",
+            "ios": "1:544534557483:ios:3479d880a535f5d8850b6e",
+            "macos": "1:544534557483:ios:3479d880a535f5d8850b6e",
+            "web": "1:544534557483:web:3a4d6abcddc930a9850b6e",
+            "windows": "1:544534557483:web:202e8e578d2a5d9b850b6e"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
