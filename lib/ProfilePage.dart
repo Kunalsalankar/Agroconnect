@@ -1,42 +1,62 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:googlemerr/MyUploadedPost.dart';
+import 'package:googlemerr/SignupPage.dart';
+import 'package:googlemerr/setting.dart';
+import 'detail_Info.dart';
 
-// Dummy HomeView page for back navigation
-class HomeView extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Text('Home Page'),
-      ),
-    );
-  }
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class ProfilePage extends StatelessWidget {
+class _ProfilePageState extends State<ProfilePage> {
+  String username = "Loading..."; // Default value while fetching data
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserName(); // Fetch user's name from Firestore
+  }
+
+  Future<void> _fetchUserName() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        setState(() {
+          username = userDoc['username'] ?? 'Unknown'; // Set username
+        });
+      }
+    } catch (e) {
+      print('Error fetching user name: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
         elevation: 0,
-        backgroundColor: Colors.green[800], // Darker color for the app bar
+        backgroundColor: Colors.green[800],
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back), // Backward arrow icon
+          icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Navigates back to HomeView
+            Navigator.pop(context);
           },
         ),
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // Background gradient
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -50,11 +70,10 @@ class ProfilePage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // Profile Header
                   Container(
                     padding: EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color: Colors.white, // Different color for the header
+                      color: Colors.white,
                       borderRadius: BorderRadius.vertical(
                         bottom: Radius.circular(30.0),
                       ),
@@ -71,15 +90,14 @@ class ProfilePage extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 60,
-                          backgroundImage: AssetImage(
-                              'assets/files/samir_umak.jpg'), // Replace with user photo
+                          backgroundImage: AssetImage('assets/files/samir_umak.jpg'),
                         ),
                         SizedBox(height: 10),
                         Text(
-                          'Kunal Salankar', // Replace with user name
+                          username, // Display fetched username
                           style: TextStyle(
                             fontSize: 28,
-                            color: Colors.green[800], // Contrasting text color
+                            color: Colors.green[800],
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.5,
                           ),
@@ -88,47 +106,55 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 30),
-
-                  // Profile Options
                   _buildProfileOption(
                     icon: Icons.info,
                     title: 'Detailed Information',
                     onTap: () {
-                      // Navigate to detailed information page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DetailInfo()),
+                      );
                     },
                   ),
+                  _buildProfileOption(
+                    icon: Icons.list, // You can choose an appropriate icon
+                    title: 'My Products',
+                    onTap: () {
+                      // TODO: Add functionality for My Products
+                    },
+                  ),
+                  _buildProfileOption(
+                    icon: Icons.post_add,
+                    title: 'My Posts',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyUploadedPost()), // Navigate to MyPost page
+                      );
+                    },
+                  ),
+
                   _buildProfileOption(
                     icon: Icons.history,
-                    title: 'Order History',
+                    title: 'My Orders',
                     onTap: () {
-                      // Navigate to order history page
-                    },
-                  ),
-                  _buildProfileOption(
-                    icon: Icons.settings,
-                    title: 'Settings',
-                    onTap: () {
-                      // Navigate to settings page
+                      // TODO: Add functionality for My Orders
                     },
                   ),
                   _buildProfileOption(
                     icon: Icons.logout,
                     title: 'Log Out',
-                    onTap: () {
-                      // Handle logout
-                    },
-                  ),
-                  _buildProfileOption(
-                    icon: Icons.help,
-                    title: 'Help & Support',
-                    onTap: () {
-                      // Navigate to support page
+                    onTap: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignupPage()),
+                            (Route<dynamic> route) => false,
+                      );
                     },
                   ),
 
                   SizedBox(height: 30),
-
-                  // Additional decorative element
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Container(
@@ -190,7 +216,7 @@ class ProfilePage extends StatelessWidget {
                 colors: [Colors.green[100]!, Colors.green[100]!],
               ),
             ),
-            child: Icon(icon, color: Colors.green[600]), // Updated icon color
+            child: Icon(icon, color: Colors.green[600]),
           ),
           title: Text(
             title,
@@ -206,14 +232,4 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: HomeView(), // Set HomeView as the initial screen
-    routes: {
-      '/profile': (context) => ProfilePage(), // Route for ProfilePage
-    },
-  ));
 }

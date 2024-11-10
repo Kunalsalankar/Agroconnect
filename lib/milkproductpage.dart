@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'AddToCartPage.dart';
+import 'buyMilk.dart';
+
 class MilkProductPage extends StatelessWidget {
   final Map<String, dynamic> product;
 
@@ -69,6 +70,7 @@ class MilkProductPage extends StatelessWidget {
                   Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: Colors.green, width: 2),
                     ),
                     elevation: 4,
                     child: Padding(
@@ -97,12 +99,12 @@ class MilkProductPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 24),
-                  // Add to Cart Button
+                  SizedBox(height: 16),
+                  // Buy Now Button
                   ElevatedButton.icon(
-                    icon: Icon(Icons.shopping_cart, size: 28),
+                    icon: Icon(Icons.monetization_on, size: 28),
                     label: Text(
-                      'Add to Cart',
+                      'Buy Now',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -114,7 +116,7 @@ class MilkProductPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AddToCartPage(product: product),
+                          builder: (context) => BuyMilkPage(product: product),
                         ),
                       );
                     },
@@ -123,7 +125,7 @@ class MilkProductPage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      shadowColor: Colors.orangeAccent.withOpacity(0.5),
+                      shadowColor: Colors.blueAccent.withOpacity(0.5),
                       elevation: 8,
                     ),
                   ),
@@ -175,7 +177,7 @@ class MilkProductPage extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
-                            // Implement chat feature
+                            _sendWhatsAppMessage(context, product['mobile_no']);
                           },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(vertical: 12),
@@ -196,6 +198,19 @@ class MilkProductPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _sendWhatsAppMessage(BuildContext context, String? phoneNumber) async {
+    final Uri whatsappUrl = Uri.parse(
+        "https://wa.me/$phoneNumber?text=Hello, I am interested in your product services.");
+    if (await canLaunchUrl(whatsappUrl)) {
+      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+    } else {
+      // Show a message if WhatsApp cannot be launched
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch WhatsApp')),
+      );
+    }
   }
 
   Widget _buildDetailRow(IconData icon, String label, String value) {

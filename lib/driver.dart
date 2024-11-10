@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io'; // Import dart:io for File
 
 class DriverRegistrationPage extends StatefulWidget {
   @override
@@ -16,9 +17,10 @@ class _DriverRegistrationPageState extends State<DriverRegistrationPage> {
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController rateController = TextEditingController();
-  final TextEditingController capacityController = TextEditingController(); // New controller for capacity
-  String? imagePath;
+  final TextEditingController capacityController = TextEditingController(); // Controller for capacity
+  String? imagePath; // Path for storing selected image
 
+  // Function to pick an image from the gallery
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -29,27 +31,60 @@ class _DriverRegistrationPageState extends State<DriverRegistrationPage> {
     }
   }
 
-  Future<void> _registerDriver() async {
-    if (_formKey.currentState!.validate() && imagePath != null) {
-      // Store driver details in Firebase Firestore
-      await FirebaseFirestore.instance.collection('driver').add({
-        'name': nameController.text,
-        'vehicle': vehicleController.text,
-        'license': licenseController.text,
-        'mobile': mobileController.text,
-        'address': addressController.text,
-        'rate': rateController.text,
-        'capacity': capacityController.text, // Store capacity
-        'imagePath': imagePath,
-      });
+  // Function to upload the image to Firebase Storage
+  Future<String?> _uploadImage() async {
+    if (imagePath == null) return null;
 
-      // Show success message and navigate back
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Driver Registered Successfully!')));
-      Navigator.pop(context); // Navigate back to TransportationServicesPage
+    // Create a reference to Firebase Storage
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child('driver_images/${DateTime.now().millisecondsSinceEpoch}.png');
+
+    // Upload the file to Firebase Storage
+    final uploadTask = storageRef.putFile(File(imagePath!));
+    await uploadTask;
+
+    // Get the download URL
+    return await storageRef.getDownloadURL();
+  }
+
+  // Function to register the driver
+  Future<void> _registerDriver() async {
+    if (_formKey.currentState!.validate()) {
+      // Upload image and get the URL
+      String? imageUrl = await _uploadImage();
+      if (imageUrl != null) {
+        // Store driver details in Firebase Firestore
+        await FirebaseFirestore.instance.collection('driver').add({
+          'name': nameController.text,
+          'vehicle': vehicleController.text,
+          'license': licenseController.text,
+          'mobile': mobileController.text,
+          'address': addressController.text,
+          'rate': rateController.text,
+          'capacity': capacityController.text, // Store capacity
+          'imagePath': imageUrl, // Store the download URL
+        });
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Driver Registered Successfully!'),
+            backgroundColor: Colors.green, // You can style the message
+          ),
+        );
+
+        // Optionally, navigate back after showing the message
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.pop(context); // Navigate back after showing the message
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Failed to upload image. Please try again.')));
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select an image and fill all fields.')),
-      );
+          SnackBar(content: Text('Please fill all fields.')));
     }
   }
 
@@ -60,11 +95,11 @@ class _DriverRegistrationPageState extends State<DriverRegistrationPage> {
         title: Text('Driver Registration'),
         backgroundColor: Colors.green,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -165,17 +200,11 @@ class _DriverRegistrationPageState extends State<DriverRegistrationPage> {
                 SizedBox(height: 16),
 
                 // Upload Image Button
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: _pickImage,
-                      child: Text('Upload Image'),
-                    ),
-                    SizedBox(width: 10),
-                    if (imagePath != null)
-                      Text('Image selected: ${imagePath!.split('/').last}'),
-                  ],
+                ElevatedButton(
+                  onPressed: _pickImage,
+                  child: Text('Upload Image'),
                 ),
+
                 SizedBox(height: 20),
 
                 // Register Button

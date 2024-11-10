@@ -3,10 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:googlemerr/driver.dart';
 import 'package:googlemerr/splash_page.dart';
-import 'package:googlemerr/transportation_services.dart';
-import 'SignupPage.dart';
 import 'home_view.dart';
 import 'subscription.dart';
+import 'transportation_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,13 +21,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      initialRoute: '/',
-      debugShowCheckedModeBanner: false,  // Disable the debug banner
+      debugShowCheckedModeBanner: false, // Disable the debug banner
+      home: AuthWrapper(), // Set the initial route to AuthWrapper
       routes: {
-        '/': (context) => HomeView(),  // Check if user is logged in
-        '/signup': (context) => SignupPage(),
+        '/signup': (context) => SplashPage(),
         '/home': (context) => HomeView(),
-        '/transportation_services': (context) => TransportationServicesPage(), // Transportation services page
         '/driver': (context) => DriverRegistrationPage(),
         '/subscription': (context) => SubscriptionPage(),
       },
@@ -47,7 +44,7 @@ class AuthWrapper extends StatelessWidget {
           if (user == null) {
             return SplashPage(); // If not logged in, show sign up page
           } else {
-            return HomeView();  // If logged in, go to home page
+            return HomeView(); // If logged in, go to home page
           }
         }
         return Scaffold(

@@ -1,36 +1,18 @@
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:share/share.dart';
-import 'AddToCartPage.dart';
+import 'buyMilk.dart';
+import 'ChatRoomPage.dart'; // Import the chat room page
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Map<String, dynamic> product;
 
-  const ProductDetailPage({Key? key, required this.product}) : super(key: key);
+  ProductDetailPage({required this.product});
 
   @override
   Widget build(BuildContext context) {
-    // Validate necessary fields
-    if (!product.containsKey('id') ||
-        !product.containsKey('mobile_no') ||
-        !product.containsKey('farmer_name') ||
-        !product.containsKey('aadhar_number') ||
-        !product.containsKey('harvest_date') ||
-        !product.containsKey('video_url')) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Error'),
-          backgroundColor: Colors.red,
-        ),
-        body: Center(
-          child: Text(
-            'Invalid product data',
-            style: TextStyle(fontSize: 18, color: Colors.red),
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -38,23 +20,16 @@ class ProductDetailPage extends StatelessWidget {
             expandedHeight: 300.0,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(product['name'] ?? 'Product Detail'),
+              title: Text(
+                product['productName'] ?? 'Product Detail',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               background: Hero(
                 tag: 'product-image-${product['id']}',
-                child: Image.asset(
-                  product['photo'],
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[200],
-                      child: Icon(
-                        Icons.broken_image,
-                        size: 100,
-                        color: Colors.grey[400],
-                      ),
-                    );
-                  },
-                ),
+                child: _buildImage(product),
               ),
             ),
             backgroundColor: Colors.green[800],
@@ -68,6 +43,7 @@ class ProductDetailPage extends StatelessWidget {
                   Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: Colors.green, width: 2),
                     ),
                     elevation: 4,
                     child: Padding(
@@ -76,88 +52,139 @@ class ProductDetailPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildDetailRow(Icons.price_change, 'Price',
-                              '₹${product['price']} / Quintal'),
+                              product['price']?.toString() ?? 'N/A'),
                           SizedBox(height: 12),
-                          _buildDetailRow(Icons.location_on, 'Location',
-                              product['location'] ?? 'Unknown'),
+                          _buildDetailRow(Icons.scale, 'Quantity',
+                              product['quantity']?.toString() ?? 'N/A'),
                           SizedBox(height: 12),
-                          _buildDetailRow(Icons.inventory, 'Quantity',
-                              product['quantity'] ?? 'N/A'),
+                          _buildDetailRow(
+                            Icons.location_pin,
+                            'Location',
+                            product['location'] ?? 'N/A',
+                          ),
                           SizedBox(height: 12),
-                          _buildDetailRow(Icons.person, 'Farmer',
-                              product['farmer_name'] ?? 'Unknown'),
+                          _buildDetailRow(
+                            Icons.person,
+                            'Farmer Name',
+                            product['farmerName'] ?? 'N/A',
+                          ),
                           SizedBox(height: 12),
-                          _buildDetailRow(Icons.credit_card, 'Aadhar Number',
-                              product['aadhar_number'] ?? 'N/A'),
+                          _buildDetailRow(
+                            Icons.credit_card,
+                            'Aadhar Number',
+                            product['aadharNumber'] ?? 'N/A',
+                          ),
                           SizedBox(height: 12),
-                          _buildDetailRow(Icons.calendar_today, 'Harvest Date',
-                              product['harvest_date'] ?? 'N/A'),
+                          _buildDetailRow(
+                            Icons.date_range,
+                            'Harvest Date',
+                            product['harvestDate'] ?? 'N/A',
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
-
-                  // "Add To Cart" Button
+                  SizedBox(height: 16),
                   ElevatedButton.icon(
-                    onPressed: () {
-                      // Handle Add to Cart action
-                      _addToCart(context);
-                    },
-                    icon: Icon(Icons.shopping_bag, size: 24, color: Colors.green),
+                    icon: Icon(Icons.monetization_on, size: 28),
                     label: Text(
-                      'Add To Cart',
-                      style: TextStyle(color: Colors.green),
+                      'Buy Now',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
                     ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BuyMilkPage(product: product),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      padding: EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      elevation: 5,
+                      shadowColor: Colors.blueAccent.withOpacity(0.5),
+                      elevation: 8,
                     ),
                   ),
-                  SizedBox(height: 20),
-
-                  // Action Buttons: Arranged in a Grid Style
-                  GridView.count(
-                    shrinkWrap: true,
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12.0,
-                    crossAxisSpacing: 12.0,
-                    childAspectRatio: 2.8,
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildActionButton(
-                        context,
-                        text: 'Product Video',
-                        color: Colors.green[500]!,
-                        icon: Icons.video_camera_front_outlined,
-                        onPressed: () {
-                          _watchVideo(context);
-                        },
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          icon: Icon(Icons.phone_in_talk, size: 24),
+                          label: Text(
+                            'Call Now',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                          onPressed: () {
+                            final mobileNumber = product['mobile_no'] ?? '';
+                            if (mobileNumber.isNotEmpty) {
+                              final Uri url = Uri(
+                                scheme: 'tel',
+                                path: mobileNumber,
+                              );
+                              launchUrl(url);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            shadowColor: Colors.teal.withOpacity(0.5),
+                            elevation: 8,
+                          ),
+                        ),
                       ),
-                      _buildActionButton(
-                        context,
-                        text: 'Chat Now',
-                        color: Colors.green[600]!,
-                        icon: Icons.chat,
-                        onPressed: () {
-                          _sendWhatsAppMessage(
-                              context, product['mobile_no'] ?? '');
-                        },
-                      ),
-                      _buildActionButton(
-                        context,
-                        text: 'Call',
-                        color: Colors.green[700]!,
-                        icon: Icons.phone,
-                        onPressed: () {
-                          _makePhoneCall(context, product['mobile_no'] ?? '');
-                        },
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          icon: Icon(Icons.chat_bubble_outline, size: 24),
+                          label: Text(
+                            'Chat Now',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                          onPressed: () async {
+                            String? username = await _getUsername();
+                            String farmerName = product['farmerName'] ?? 'Farmer';
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatRoomPage(
+                                  username: username ?? 'Guest', // Provide a default if null
+                                  farmerName: farmerName,
+                                  chatId: product['id'] ?? '', // Ensure this is not null
+                                ),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            shadowColor: Colors.purple.withOpacity(0.5),
+                            elevation: 8,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 30),
                 ],
               ),
             ),
@@ -167,140 +194,51 @@ class ProductDetailPage extends StatelessWidget {
     );
   }
 
-  // Add to Cart functionality
-  void _addToCart(BuildContext context) {
-    // Navigate to the AddToCartPage with the product details
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddToCartPage(product: product),
-      ),
-    );
+  Future<String?> _getUsername() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    // Fetch the username from Firestore or authentication
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      return userDoc['username']; // Adjust based on your Firestore structure
+    }
+    return null; // Handle the case where the user is not found
   }
 
-  // Helper method to build detail rows with icons
-  Widget _buildDetailRow(IconData icon, String title, String subtitle) {
+
+  Widget _buildDetailRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: Colors.green[700],
-          size: 28,
+        Icon(icon, color: Colors.green),
+        SizedBox(width: 8),
+        Text(
+          '$label: ',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
-        SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.green[800],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.green[600],
-                ),
-              ),
-            ],
-          ),
+        Text(
+          value,
+          style: TextStyle(fontSize: 16),
         ),
       ],
     );
   }
 
-  // Builds an action button with icon and text
-  Widget _buildActionButton(
-      BuildContext context, {
-        required String text,
-        required Color color,
-        required IconData icon,
-        required VoidCallback onPressed,
-      }) {
-    return Expanded(
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 4),
-        child: ElevatedButton.icon(
-          onPressed: onPressed,
-          icon: Icon(icon, color: Colors.green, size: 20),
-          label: Text(
-            text,
-            style: TextStyle(fontSize: 14, color: Colors.green),
-          ),
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            elevation: 5,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Watch product video
-  void _watchVideo(BuildContext context) async {
-    final String videoUrl = product['video_url'] ?? '';
-    if (videoUrl.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Video URL not available')),
+  Widget _buildImage(Map<String, dynamic> item) {
+    String imagePath = item['imageUrl'] ?? '';
+    if (imagePath.startsWith('http')) {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(Icons.broken_image, size: 50, color: Colors.grey);
+        },
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return Center(child: CircularProgressIndicator());
+        },
       );
-      return;
-    }
-
-    final Uri videoUri = Uri.parse(videoUrl);
-    if (await canLaunch(videoUri.toString())) {
-      await launch(videoUri.toString());
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not launch video')),
-      );
-    }
-  }
-
-  // Send WhatsApp message
-  void _sendWhatsAppMessage(BuildContext context, String phoneNumber) async {
-    if (phoneNumber.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Mobile number not available')),
-      );
-      return;
-    }
-
-    final Uri whatsappUrl = Uri.parse(
-        "https://wa.me/$phoneNumber?text=Hello, I am interested in your product.");
-    if (await canLaunch(whatsappUrl.toString())) {
-      await launch(whatsappUrl.toString());
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not launch WhatsApp')),
-      );
-    }
-  }
-
-  // Make phone call
-  void _makePhoneCall(BuildContext context, String phoneNumber) async {
-    if (phoneNumber.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Mobile number not available')),
-      );
-      return;
-    }
-
-    final Uri phoneUri = Uri.parse('tel:$phoneNumber');
-    if (await canLaunch(phoneUri.toString())) {
-      await launch(phoneUri.toString());
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not make a phone call')),
-      );
+      return Icon(Icons.image_not_supported, size: 100, color: Colors.grey);
     }
   }
 }

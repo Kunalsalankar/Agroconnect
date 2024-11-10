@@ -9,5 +9,7 @@
   "usernameRequired": "वापरकर्तानाव आवश्यक आहे",
   "emailRequired": "ईमेल आवश्यक आहे",
   "passwordRequired": "पासवर्ड 6+ अक्षरांचा असावा",
-  "registerFailed": "नोंदणी अयशस्वी"
+  "registerFailed": "नोंदणी अयशस्वी",
+  "advertisement": "जाहिरात",
+  "myPost": "माझी पोस्ट"
 }

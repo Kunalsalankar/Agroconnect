@@ -9,5 +9,7 @@
   "usernameRequired": "Username required",
   "emailRequired": "Email required",
   "passwordRequired": "Password should be 6+ chars",
-  "registerFailed": "Registration failed"
+  "registerFailed": "Registration failed",
+  "advertisement": "Advertisement",
+  "myPost": "My Post"
 }
