@@ -5,6 +5,7 @@ import 'package:googlemerr/MyUploadedPost.dart';
 import 'package:googlemerr/SignupPage.dart';
 import 'package:googlemerr/setting.dart';
 import 'detail_Info.dart';
+import 'MyOrderPage.dart'; // Update the path to the actual file location
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -117,12 +118,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
                   _buildProfileOption(
-                    icon: Icons.list, // You can choose an appropriate icon
-                    title: 'My Products',
+                    icon: Icons.list,
+                    title: 'My Orders',
                     onTap: () {
-                      // TODO: Add functionality for My Products
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyOrdersPage(), // Navigate to MyOrdersPage
+                        ),
+                      );
                     },
                   ),
+
+
                   _buildProfileOption(
                     icon: Icons.post_add,
                     title: 'My Posts',
@@ -134,13 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
 
-                  _buildProfileOption(
-                    icon: Icons.history,
-                    title: 'My Orders',
-                    onTap: () {
-                      // TODO: Add functionality for My Orders
-                    },
-                  ),
+
                   _buildProfileOption(
                     icon: Icons.logout,
                     title: 'Log Out',

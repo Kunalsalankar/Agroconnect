@@ -351,23 +351,8 @@ class _HomeViewState extends State<HomeView> {
                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
                   child: SizedBox(
                     width: double.infinity,
-                    height: 36, // Fixed height for consistency
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        _addToCart(product);
-                      },
-                      icon: Icon(Icons.add_shopping_cart, size: 18),
-                      label: Text(
-                        'Add',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                      ),
-                    ),
+                    height: 5, // Fixed height for consistency
+
                   ),
                 ),
               ],

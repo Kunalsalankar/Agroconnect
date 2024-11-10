@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import 'MyPost.dart';
+import 'ProductDetailPage.dart';
 import 'preorder_page.dart';
 import 'edit_advertisement.dart';
 import 'product.dart';
@@ -302,7 +303,6 @@ class AdvertisementCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 8),
-
             Text(
               data['productName'] ?? 'Unknown Product',
               style: TextStyle(
@@ -315,55 +315,58 @@ class AdvertisementCard extends StatelessWidget {
             Text('Quantity: ${data['quantity'] ?? 'N/A'}', style: TextStyle(fontSize: 16)),
             Text('Location: ${data['location'] ?? 'N/A'}', style: TextStyle(fontSize: 16)),
             Text('Farmer: ${data['farmerName'] ?? 'N/A'}', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 2),
             Text('Contact No: ${data['contactNumber'] ?? 'N/A'}', style: TextStyle(fontSize: 16)),
-
-
-            SizedBox(height: 2),
+            SizedBox(height: 4),
             Text(
               'Harvest Date: ${data['harvestDate'] ?? 'N/A'}',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 12),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PreorderPage(
-                          productData: data,
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green, // Background color for Preorder
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PreorderPage(productData: data),
                         ),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[600],
+                      );
+                    },
+                    child: Text(
+                      'Preorder',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  child: Text('Preorder'),
-                ),
-                SizedBox(width: 12),
-                ElevatedButton(
-                  onPressed: () {
-                    _sendWhatsAppMessage(context, data['contact'] ?? '');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[600],
+                  SizedBox(width: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green, // Background color for Chat Now
+                    ),
+                    onPressed: () => _sendWhatsAppMessage(context, data['contactNumber'] ?? ''),
+                    child: Text(
+                      'Chat Now',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  child: Text('Chat Now'),
-                ),
-                SizedBox(width: 12),
-                ElevatedButton(
-                  onPressed: () {
-                    _makePhoneCall(context, data['contact'] ?? '');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[600],
+                  SizedBox(width: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green, // Background color for Call Now
+                    ),
+                    onPressed: () => _makePhoneCall(context, data['contactNumber'] ?? ''),
+                    child: Text(
+                      'Call Now',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  child: Text('Call Now'),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
