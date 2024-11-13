@@ -142,7 +142,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
 
-
                   _buildProfileOption(
                     icon: Icons.logout,
                     title: 'Log Out',

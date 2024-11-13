@@ -63,11 +63,10 @@ class ProductDetailPage extends StatelessWidget {
                           SizedBox(height: 12),
                           _buildDetailRow(Icons.person, 'Farmer Name', product['farmerName'] ?? 'N/A'),
                           SizedBox(height: 12),
-                          _buildDetailRow(Icons.credit_card, 'Aadhar Number', product['aadharNumber'] ?? 'N/A'),
+                          _buildDetailRow(Icons.phone, 'Mobile Number', product['aadharNumber'] ?? 'N/A'),
                           SizedBox(height: 12),
                           _buildDetailRow(Icons.date_range, 'Harvest Date', product['harvestDate'] ?? 'N/A'),
-                          SizedBox(height: 12),
-                          _buildDetailRow(Icons.phone, 'Mobile Number', product['mobileNumber'] ?? 'N/A'),
+
                         ],
                       ),
                     ),
@@ -125,7 +124,7 @@ class ProductDetailPage extends StatelessWidget {
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green[600]),
                           ),
                           onPressed: () {
-                            final mobileNumber = product['mobileNumber'] ?? '';
+                            final mobileNumber = product['aadharNumber'] ?? '';
                             _makePhoneCall(context, mobileNumber);
                           },
                           style: ElevatedButton.styleFrom(
@@ -144,7 +143,7 @@ class ProductDetailPage extends StatelessWidget {
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green[600]),
                           ),
                           onPressed: () {
-                            final mobileNumber = product['mobileNumber'] ?? '';
+                            final mobileNumber = product['aadharNumber'] ?? '';
                             _sendWhatsAppMessage(context, mobileNumber);
                           },
                           style: ElevatedButton.styleFrom(
@@ -158,25 +157,7 @@ class ProductDetailPage extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.update, size: 24),
-                    label: Text(
-                      'Update Details',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green[600]),
-                    ),
-                    onPressed: () {
-                      _storeOrderInLocalStorage(product);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Product details updated successfully')),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      shadowColor: Colors.grey.withOpacity(0.5),
-                      elevation: 8,
-                    ),
-                  ),
+
                 ],
               ),
             ),

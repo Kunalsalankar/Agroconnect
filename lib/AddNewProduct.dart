@@ -203,22 +203,6 @@ class _AddNewProductState extends State<AddNewProduct> {
                 },
               ),
               SizedBox(height: 16),
-              TextFormField(
-                controller: mobileNumberController,
-                decoration: InputDecoration(
-                  labelText: 'Mobile Number',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the mobile number';
-                  } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-                    return 'Please enter a valid 10-digit mobile number';
-                  }
-                  return null;
-                },
-              ),
               SizedBox(height: 16),
               TextFormField(
                 controller: locationController,
@@ -251,16 +235,16 @@ class _AddNewProductState extends State<AddNewProduct> {
               TextFormField(
                 controller: aadharNumberController,
                 decoration: InputDecoration(
-                  labelText: 'Aadhar Number',
+                  labelText: 'Mobile Number',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter the Aadhar number';
+                    return 'Please enter the Mobile number';
                   }
-                  if (value.length != 12 && value.length != 14) {
-                    return 'Aadhar number should be 12 or 14 digits';
+                  if (value.length != 10 && value.length != 10) {
+                    return 'Mobile number should be 10 digits';
                   }
                   return null;
                 },

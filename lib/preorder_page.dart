@@ -127,6 +127,9 @@ class _PreorderPageState extends State<PreorderPage> {
                       return;
                     }
 
+                    final preorderQuantity = int.parse(_quantityController.text);
+                    final productId = widget.productData['productId'];
+
                     // Prepare preorder data with userId included
                     final preorderData = {
                       'userId': currentUser.uid,
@@ -135,7 +138,7 @@ class _PreorderPageState extends State<PreorderPage> {
                       'name': _nameController.text,
                       'contactNumber': _contactController.text,
                       'email': _emailController.text,
-                      'quantity': _quantityController.text,
+                      'quantity': preorderQuantity,
                       'specialInstructions': _instructionsController.text,
                       'deliveryAddress': _addressController.text,
                       'city': _cityController.text,
@@ -150,13 +153,17 @@ class _PreorderPageState extends State<PreorderPage> {
                       await FirebaseFirestore.instance
                           .collection('samyak')
                           .add(preorderData);
+
+                      // Update the product quantity
+                      await updateAdvertisementQuantity(productId, preorderQuantity);
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Preorder placed successfully')),
                       );
                       Navigator.pop(context);
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to place preorder')),
+                        SnackBar(content: Text('Failed to place preorder: $e')),
                       );
                     }
                   }
@@ -175,6 +182,30 @@ class _PreorderPageState extends State<PreorderPage> {
         ),
       ),
     );
+  }
+
+  Future<void> updateAdvertisementQuantity(String productId, int preorderQuantity) async {
+    final productRef = FirebaseFirestore.instance.collection('ayush').doc(productId);
+
+    try {
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final snapshot = await transaction.get(productRef);
+        if (snapshot.exists) {
+          int currentQuantity = snapshot['quantity'];
+          if (currentQuantity >= preorderQuantity) {
+            int updatedQuantity = currentQuantity - preorderQuantity;
+            transaction.update(productRef, {'quantity': updatedQuantity});
+          } else {
+            throw Exception('Not enough stock available');
+          }
+        }
+      });
+    } catch (e) {
+      // Handle errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating quantity: $e')),
+      );
+    }
   }
 
   Widget _buildTextField({

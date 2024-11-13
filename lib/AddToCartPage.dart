@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'ChartOrderPage.dart';
 import 'buy_now.dart';
 
 class AddToCartPage extends StatelessWidget {
@@ -117,7 +118,7 @@ class AddToCartPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => BuyNowPage(product: {},),
+                            builder: (context) => CartOrderPage(),
                           ),
                         );
                       },
