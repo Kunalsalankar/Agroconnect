@@ -32,26 +32,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
       'farmer_name': 'Virat Kholi',
       'aadhar_number': '1234-2345-1231',
     },
-    {
-      'id': '3',
-      'name': 'Butter 250g',
-      'image': 'assets/files/butter.jpeg',
-      'priceWeekly': '300Rs Weekly',
-      'priceMonthly': '1200Rs Monthly',
-      'mobile_no': '9370482365',
-      'farmer_name': 'Ram Vaidya',
-      'aadhar_number': '1234-2345-1239',
-    },
-    {
-      'id': '4',
-      'name': 'Milk 2L',
-      'image': 'assets/files/milk2.jpeg', // Ensure the asset path is correct
-      'priceWeekly': '400Rs Weekly',
-      'priceMonthly': '2400Rs Monthly',
-      'mobile_no': '7776884378',
-      'farmer_name': 'Virat Sharma',
-      'aadhar_number': '1234-2345-1230',
-    },
+
+
   ];
 
   List<Map<String, dynamic>> allItems = [];

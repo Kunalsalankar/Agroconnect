@@ -112,15 +112,23 @@ class MilkProductPage extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      // Navigate to AddToCartPage and pass the product data
+                      // Ensure all required product data is passed
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BuyMilkPage(product: product),
+                          builder: (context) => BuyMilkPage(milkProduct: {
+                            'id': product['id'],
+                            'name': product['name'] ?? 'Milk Product',
+                            'image': product['image'],
+                            'priceWeekly': product['priceWeekly'],
+                            'priceMonthly': product['priceMonthly'],
+                            'quantity': product['quantity'] ?? 0, // Ensure quantity is included
+                            'farmerName': product['farmer_name'],
+                            'mobile_no': product['mobile_no'],
+                          }),
                         ),
                       );
-                    },
-                    style: ElevatedButton.styleFrom(
+                    },                    style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),

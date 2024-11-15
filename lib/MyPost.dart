@@ -116,7 +116,7 @@ class _MyPostState extends State<MyPost> {
           'description': adDescriptionController.text.trim(),
           'contactNumber': contactNumberController.text.trim(),
           'price': 'Rs ${priceController.text.trim()}',
-          'quantity': quantityController.text.trim(),
+          'quantity': int.tryParse(quantityController.text.trim()) ?? 0,  // Defaults to 0 if invalid
           'location': locationController.text.trim(),
           'farmerName': farmerNameController.text.trim(),
           'harvestDate': harvestDateController.text.trim(),
@@ -259,7 +259,7 @@ class _MyPostState extends State<MyPost> {
               TextFormField(
                 controller: quantityController,
                 decoration: InputDecoration(
-                  labelText: 'Quantity',
+                  labelText: 'Quantity (Kg)',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {

@@ -243,3 +243,5 @@ class _AuctionPostState extends State<AuctionPost> {
     );
   }
 }
+
+

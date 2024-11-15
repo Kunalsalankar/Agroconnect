@@ -31,32 +31,40 @@ class _AuctionDetailState extends State<AuctionDetail> {
   }
 
   Future<void> _getCurrentUserData() async {
-    currentUserId = _auth.currentUser?.uid;
-    if (currentUserId != null) {
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(currentUserId).get();
-      setState(() {
-        currentUsername = userDoc['username'];
-      });
+    try {
+      currentUserId = _auth.currentUser?.uid;
+      if (currentUserId != null) {
+        DocumentSnapshot userDoc = await _firestore.collection('users').doc(currentUserId).get();
+        setState(() {
+          currentUsername = userDoc['username'];
+        });
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
     }
   }
 
   Future<void> _fetchAuctionDetails() async {
-    DocumentSnapshot auctionDoc = await _firestore.collection('auctions').doc(widget.auctionId).get();
-    if (auctionDoc.exists) {
-      setState(() {
-        auctionData = auctionDoc.data() as Map<String, dynamic>?;
-        startDate = (auctionData?['startDate'] as Timestamp?)?.toDate();
-        endDate = (auctionData?['endDate'] as Timestamp?)?.toDate();
-      });
-      _checkAuctionWinner();  // Check winner after fetching auction details
+    try {
+      DocumentSnapshot auctionDoc = await _firestore.collection('auctions').doc(widget.auctionId).get();
+      if (auctionDoc.exists) {
+        setState(() {
+          auctionData = auctionDoc.data() as Map<String, dynamic>?;
+          startDate = (auctionData?['startDate'] as Timestamp?)?.toDate();
+          endDate = (auctionData?['endDate'] as Timestamp?)?.toDate();
+        });
+        _checkAuctionWinner(); // Check winner after fetching auction details
+      }
+    } catch (e) {
+      print("Error fetching auction details: $e");
     }
   }
 
   Future<void> _placeBid() async {
     final bidAmount = double.tryParse(_bidController.text);
-    final basePrice = auctionData?['basePrice'] ?? 0;
+    final basePrice = double.tryParse(auctionData?['basePrice'] ?? '0');
 
-    if (bidAmount == null || bidAmount < basePrice) {
+    if (bidAmount == null || basePrice == null || bidAmount < basePrice) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter a bid equal to or higher than the base price.')),
       );
@@ -86,6 +94,7 @@ class _AuctionDetailState extends State<AuctionDetail> {
       // Recheck for the winner after placing a bid
       _checkAuctionWinner();
     } catch (e) {
+      print("Error placing bid: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to place bid. Please try again.')),
       );
@@ -165,7 +174,6 @@ class _AuctionDetailState extends State<AuctionDetail> {
             ),
             SizedBox(height: 8),
             _buildDetailRow('Base Price:', 'Rs ${auctionData!['basePrice'] ?? 'N/A'}'),
-            _buildDetailRow('Bid Increment:', 'Rs ${auctionData!['bidIncrement'] ?? 'N/A'}'),
             _buildDetailRow('Quantity:', '${auctionData!['quantity'] ?? 'N/A'} kg'),
             _buildDetailRow('Location:', auctionData!['location'] ?? 'N/A'),
             _buildDetailRow('Farmer:', auctionData!['farmerName'] ?? 'N/A'),
@@ -237,37 +245,41 @@ class _AuctionDetailState extends State<AuctionDetail> {
 
   Widget _statusContainer({required String message, required Color backgroundColor, required Color textColor}) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12.0),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: backgroundColor,
-        border: Border.all(color: Colors.black),
         borderRadius: BorderRadius.circular(10),
+        boxShadow: [BoxShadow(color: Colors.grey[300]!, blurRadius: 4)],
       ),
       child: Text(
         message,
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
         textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: textColor),
       ),
     );
   }
 
   Widget _bidInput() {
-    return Column(
+    return Row(
       children: [
-        TextField(
-          controller: _bidController,
-          decoration: InputDecoration(
-            labelText: 'Enter your bid amount',
-            border: OutlineInputBorder(),
-            filled: true,
-            fillColor: Colors.grey[200],
+        Expanded(
+          child: TextField(
+            controller: _bidController,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              labelText: 'Enter your bid amount',
+              border: OutlineInputBorder(),
+            ),
           ),
-          keyboardType: TextInputType.number,
         ),
-        SizedBox(height: 10),
+        SizedBox(width: 10),
         ElevatedButton(
           onPressed: _placeBid,
           child: Text('Place Bid'),
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          ),
         ),
       ],
     );
@@ -279,28 +291,36 @@ class _AuctionDetailState extends State<AuctionDetail> {
           .collection('auctions')
           .doc(widget.auctionId)
           .collection('bids')
-          .orderBy('timestamp', descending: true)
+          .orderBy('bidAmount', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
         }
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Text('No bids placed yet.');
+        final bids = snapshot.data!.docs;
+        if (bids.isEmpty) {
+          return Text(
+            'No bids yet!',
+            style: TextStyle(fontSize: 18, color: Colors.grey),
+          );
         }
 
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: snapshot.data!.docs.length,
-          itemBuilder: (context, index) {
-            var bidDoc = snapshot.data!.docs[index];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: bids.map((bid) {
+            final bidData = bid.data() as Map<String, dynamic>;
+            final username = bidData['username'] ?? 'Unknown';
+            final bidAmount = bidData['bidAmount'] ?? 0.0;
+
             return ListTile(
-              title: Text('${bidDoc['username']} placed a bid of Rs ${bidDoc['bidAmount']}'),
-              subtitle: Text('${DateFormat('dd MMM yyyy, HH:mm').format((bidDoc['timestamp'] as Timestamp).toDate())}'),
+              title: Text(username, style: TextStyle(fontWeight: FontWeight.w600)),
+              trailing: Text(
+                'Rs $bidAmount',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.green[700]),
+              ),
             );
-          },
+          }).toList(),
         );
       },
     );
@@ -308,15 +328,23 @@ class _AuctionDetailState extends State<AuctionDetail> {
 
   Widget _buildWinningMessage() {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.green[100],
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Text(
-        'Congratulations! The auction winner is: $winningUsername',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green[800]),
-        textAlign: TextAlign.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Auction Winner:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green[800]),
+          ),
+          Text(
+            winningUsername!,
+            style: TextStyle(fontSize: 16, color: Colors.green[700]),
+          ),
+        ],
       ),
     );
   }

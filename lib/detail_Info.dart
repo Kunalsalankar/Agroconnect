@@ -1,9 +1,11 @@
-// detail_info.dart
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:googlemerr/SignupPage.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+import 'SignupPage.dart';
 import 'ProfileSetting.dart';
 
 class DetailInfo extends StatefulWidget {
@@ -12,15 +14,17 @@ class DetailInfo extends StatefulWidget {
 }
 
 class _DetailInfoState extends State<DetailInfo> {
-  String username = "Loading..."; // Default text while fetching username
+  String username = "Loading...";
+  String? profileImageUrl; // URL for the user's profile image
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-    _fetchUserName(); // Fetch the username when the page initializes
+    _fetchUserData();
   }
 
-  Future<void> _fetchUserName() async {
+  Future<void> _fetchUserData() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -30,11 +34,50 @@ class _DetailInfoState extends State<DetailInfo> {
             .get();
 
         setState(() {
-          username = userDoc['username'] ?? 'Unknown'; // Update the username
+          username = userDoc['username'] ?? 'Unknown';
+          profileImageUrl = userDoc['profileImageUrl'] ?? null; // Fetch the profile image URL
         });
       }
     } catch (e) {
-      print('Error fetching username: $e');
+      print('Error fetching user data: $e');
+    }
+  }
+
+  Future<void> _updateProfilePicture() async {
+    try {
+      // Pick an image from the gallery
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+      if (image != null) {
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user == null) return;
+
+        // Upload the image to Firebase Storage
+        File imageFile = File(image.path);
+        String filePath = 'profilePictures/${user.uid}.jpg';
+
+        UploadTask uploadTask = FirebaseStorage.instance
+            .ref()
+            .child(filePath)
+            .putFile(imageFile);
+
+        TaskSnapshot snapshot = await uploadTask;
+
+        // Get the download URL for the uploaded image
+        String downloadUrl = await snapshot.ref.getDownloadURL();
+
+        // Update the Firestore document with the new profile image URL
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'profileImageUrl': downloadUrl});
+
+        setState(() {
+          profileImageUrl = downloadUrl; // Update the state to reflect the new DP
+        });
+      }
+    } catch (e) {
+      print('Error updating profile picture: $e');
     }
   }
 
@@ -63,18 +106,23 @@ class _DetailInfoState extends State<DetailInfo> {
               children: [
                 CircleAvatar(
                   radius: 70,
-                  backgroundImage: AssetImage('assets/files/samir_umak.jpg'),
+                  backgroundImage: profileImageUrl != null
+                      ? NetworkImage(profileImageUrl!) // Display uploaded DP
+                      : AssetImage('assets/files/samir_umak.jpg') as ImageProvider, // Default DP
                 ),
                 Positioned(
                   bottom: 0,
                   right: 4,
-                  child: CircleAvatar(
-                    radius: 18,
-                    backgroundColor: Colors.green[800],
-                    child: Icon(
-                      Icons.camera_alt,
-                      color: Colors.white,
-                      size: 20,
+                  child: GestureDetector(
+                    onTap: _updateProfilePicture,
+                    child: CircleAvatar(
+                      radius: 18,
+                      backgroundColor: Colors.green[800],
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -83,7 +131,7 @@ class _DetailInfoState extends State<DetailInfo> {
           ),
           SizedBox(height: 20),
           Text(
-            username, // Display the fetched username here
+            username,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -122,39 +170,7 @@ class _DetailInfoState extends State<DetailInfo> {
                       );
                     },
                   ),
-                  ListTile(
-                    leading: Icon(Icons.lock, color: Colors.black87),
-                    title: Text('Change Password'),
-                    trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                    onTap: () {
-                      // Handle Change Password tap
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.post_add, color: Colors.black87),
-                    title: Text('My Posts'),
-                    trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                    onTap: () {
-                      // Handle My Posts tap
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.store, color: Colors.black87),
-                    title: Text('Agri Shop'),
-                    trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                    onTap: () {
-                      // Handle Agri Shop tap
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.shopping_bag, color: Colors.black87),
-                    title: Text('My Store'),
-                    trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                    onTap: () {
-                      // Handle My Store tap
-                    },
-                  ),
-
+                  // Add other options here...
                   ListTile(
                     leading: Icon(Icons.logout, color: Colors.black87),
                     title: Text('Logout'),

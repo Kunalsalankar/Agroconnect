@@ -26,6 +26,34 @@ class _PreorderPageState extends State<PreorderPage> {
   DateTime _deliveryDate = DateTime.now();
   String _paymentMethod = 'Cash on Delivery';
 
+  // Store the available quantity of the product
+  int _availableQuantity = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch the available quantity when the page is loaded
+    _fetchAvailableQuantity();
+  }
+
+  Future<void> _fetchAvailableQuantity() async {
+    final productId = widget.productData['productId'];
+    final productRef = FirebaseFirestore.instance.collection('ayush').doc(productId);
+
+    try {
+      final docSnapshot = await productRef.get();
+      if (docSnapshot.exists) {
+        setState(() {
+          _availableQuantity = docSnapshot['quantity'];
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching product quantity: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,6 +156,13 @@ class _PreorderPageState extends State<PreorderPage> {
                     }
 
                     final preorderQuantity = int.parse(_quantityController.text);
+                    if (preorderQuantity > _availableQuantity) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Quantity exceeds available stock')),
+                      );
+                      return;
+                    }
+
                     final productId = widget.productData['productId'];
 
                     // Prepare preorder data with userId included

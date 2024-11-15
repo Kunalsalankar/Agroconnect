@@ -13,15 +13,16 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String username = "Loading..."; // Default value while fetching data
+  String username = "Kunal Salankar"; // Default value while fetching data
+  String? profileImageUrl; // URL for the profile picture
 
   @override
   void initState() {
     super.initState();
-    _fetchUserName(); // Fetch user's name from Firestore
+    _fetchUserData(); // Fetch username and profile image
   }
 
-  Future<void> _fetchUserName() async {
+  Future<void> _fetchUserData() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -31,11 +32,12 @@ class _ProfilePageState extends State<ProfilePage> {
             .get();
 
         setState(() {
-          username = userDoc['username'] ?? 'Unknown'; // Set username
+          username = userDoc['username'] ?? 'Unknown';
+          profileImageUrl = userDoc['profileImageUrl'] ?? null; // Set profile image
         });
       }
     } catch (e) {
-      print('Error fetching user name: $e');
+      print('Error fetching user data: $e');
     }
   }
 
@@ -91,7 +93,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         CircleAvatar(
                           radius: 60,
-                          backgroundImage: AssetImage('assets/files/samir_umak.jpg'),
+                          backgroundImage: profileImageUrl != null
+                              ? NetworkImage(profileImageUrl!) // Show uploaded image
+                              : AssetImage('assets/files/samir_umak.jpg') as ImageProvider, // Default image
                         ),
                         SizedBox(height: 10),
                         Text(
@@ -129,8 +133,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     },
                   ),
-
-
                   _buildProfileOption(
                     icon: Icons.post_add,
                     title: 'My Posts',
@@ -141,7 +143,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     },
                   ),
-
                   _buildProfileOption(
                     icon: Icons.logout,
                     title: 'Log Out',
@@ -154,7 +155,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     },
                   ),
-
                   SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
