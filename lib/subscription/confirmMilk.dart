@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'payment.dart'; // Ensure this file is available
-import 'cancel.dart';  // Ensure this file is available
+import '../Razorpay/payment.dart'; // Ensure this file is available
+import '../home_page/cancel.dart';  // Ensure this file is available
 
 class ConfirmMilkPage extends StatelessWidget {
   final Map<String, dynamic> product;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'theme_notifier.dart'; // Import ThemeNotifier
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -44,20 +43,7 @@ class SettingsPage extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                title: Text('Light'),
-                onTap: () {
-                  Provider.of<ThemeNotifier>(context, listen: false).setLightMode();
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                title: Text('Dark'),
-                onTap: () {
-                  Provider.of<ThemeNotifier>(context, listen: false).setDarkMode();
-                  Navigator.of(context).pop();
-                },
-              ),
+
             ],
           ),
         );

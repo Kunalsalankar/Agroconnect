@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:googlemerr/SignupPage.dart';
-import 'ProfileSetting.dart';
+import 'package:googlemerr/SignUp/SignupPage.dart';
+import '../profile/ProfileSetting.dart';
 
 class DetailInfo extends StatefulWidget {
   @override

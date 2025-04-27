@@ -3,16 +3,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'AddToCartPage.dart'; // Import your cart page
 import 'ProductDetailPage.dart'; // Import your product detail page
-import 'ProfilePage.dart'; // Import your profile page
-import 'transportation_services.dart'; // Import transportation services
-import 'AboutUsPage.dart'; // Import about us page
+import '../profile/ProfilePage.dart'; // Import your profile page
+import '../Transportation/transportation_services.dart'; // Import transportation services
+import '../About_us/AboutUsPage.dart'; // Import about us page
 import 'package:url_launcher/url_launcher.dart';
 import 'AddNewProduct.dart'; // Import the add new product page
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firebase Firestore
-import 'subscription.dart';
-import 'adverstiment.dart';
-import 'auction.dart';
-import 'chat_dashboard.dart';
+import '../subscription.dart';
+import '../Adverstiment/adverstiment.dart';
+import '../auction/auction.dart';
+import 'package:googlemerr/chatting/chat_dashboard.dart';
 class HomeView extends StatefulWidget {
   @override
   _HomeViewState createState() => _HomeViewState();

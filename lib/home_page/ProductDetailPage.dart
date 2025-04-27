@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'buy_now.dart';
-import 'ChatRoomPage.dart';
+import '../chatting/ChatRoomPage.dart';
 import 'AddToCartPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

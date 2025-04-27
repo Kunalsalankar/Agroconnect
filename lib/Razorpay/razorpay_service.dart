@@ -2,7 +2,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'MyOrderPage.dart';
+import '../order_page/MyOrderPage.dart';
 
 class RazorpayService {
   late Razorpay _razorpay;

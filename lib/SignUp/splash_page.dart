@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'SignupPage.dart';
+import '../SignUp/SignupPage.dart';
 class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

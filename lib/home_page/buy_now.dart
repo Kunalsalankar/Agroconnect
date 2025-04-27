@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'cancel.dart';
-import 'razorpay_service.dart';
-import 'OrderPage.dart';
+import '../Razorpay/razorpay_service.dart';
+import '../order_page/OrderPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore for database
 

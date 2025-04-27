@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'edit_advertisement.dart';
-import 'preorder_page.dart';
+import '../Adverstiment/edit_advertisement.dart';
+import '../Adverstiment/preorder_page.dart';
 
 class MyUploadedPost extends StatefulWidget {
   @override

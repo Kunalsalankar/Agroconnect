@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:googlemerr/driver.dart';
-import 'package:googlemerr/splash_page.dart';
-import 'home_view.dart';
+import 'package:googlemerr/Transportation/driver.dart';
+import 'package:googlemerr/SignUp/splash_page.dart';
+import 'home_page/home_view.dart';
 import 'subscription.dart';
-import 'transportation_services.dart';
+import 'Transportation/transportation_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

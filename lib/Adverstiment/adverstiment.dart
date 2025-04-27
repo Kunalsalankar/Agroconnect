@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
-import 'MyPost.dart';
-import 'ProductDetailPage.dart';
+import '../Adverstiment/MyPost.dart';
+import '../home_page/ProductDetailPage.dart';
 import 'preorder_page.dart';
 import 'edit_advertisement.dart';
 import 'product.dart';
@@ -340,10 +340,9 @@ class AdvertisementCard extends StatelessWidget {
                     },
                     child: Text(
                       'Preorder',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white,fontSize: 13),
                     ),
                   ),
-                  SizedBox(width: 16),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green, // Background color for Chat Now
@@ -351,10 +350,10 @@ class AdvertisementCard extends StatelessWidget {
                     onPressed: () => _sendWhatsAppMessage(context, data['contactNumber'] ?? ''),
                     child: Text(
                       'Chat Now',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white,fontSize: 13)
+
                     ),
                   ),
-                  SizedBox(width: 16),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green, // Background color for Call Now

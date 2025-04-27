@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:googlemerr/razorpay_service.dart';
+import 'package:googlemerr/Razorpay/razorpay_service.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'razorpay_service.dart';
+import '../Razorpay/razorpay_service.dart';
 
 class CartOrderPage extends StatefulWidget {
   @override

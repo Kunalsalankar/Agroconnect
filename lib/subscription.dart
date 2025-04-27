@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'milkproductpage.dart';
-import 'home_view.dart';
-import 'AddServiceProduct.dart'; // Import the AddServiceProduct file
+import 'subscription/milkproductpage.dart';
+import 'home_page/home_view.dart';
+import 'subscription/AddServiceProduct.dart'; // Import the AddServiceProduct file
 
 class SubscriptionPage extends StatefulWidget {
   @override
@@ -41,16 +41,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
       'mobile_no': '9370482365',
       'farmer_name': 'Ram Vaidya',
       'aadhar_number': '1234-2345-1239',
-    },
-    {
-      'id': '4',
-      'name': 'Milk 2L',
-      'image': 'assets/files/milk2.jpeg', // Ensure the asset path is correct
-      'priceWeekly': '400Rs Weekly',
-      'priceMonthly': '2400Rs Monthly',
-      'mobile_no': '7776884378',
-      'farmer_name': 'Virat Sharma',
-      'aadhar_number': '1234-2345-1230',
     },
   ];
 

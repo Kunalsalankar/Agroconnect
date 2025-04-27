@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:googlemerr/MyUploadedPost.dart';
-import 'package:googlemerr/SignupPage.dart';
-import 'package:googlemerr/setting.dart';
+import 'package:googlemerr/Adverstiment/MyUploadedPost.dart';
+import 'package:googlemerr/SignUp/SignupPage.dart';
+import 'package:googlemerr/profile/setting.dart';
 import 'detail_Info.dart';
-import 'MyOrderPage.dart'; // Update the path to the actual file location
+import '../order_page/MyOrderPage.dart'; // Update the path to the actual file location
 
 class ProfilePage extends StatefulWidget {
   @override
